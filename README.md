@@ -7,11 +7,42 @@ Patch source for [Morphe](https://morphe.software), the patcher for Android apps
 ## Supported apps
 
 <!-- PATCHES_START EXPANDED -->
+> **[v1.0.0-dev.1](https://github.com/thebugsmith/bugsmith-morphe-patches/releases/tag/v1.0.0-dev.1)**&nbsp;&nbsp;•&nbsp;&nbsp;`dev`&nbsp;&nbsp;•&nbsp;&nbsp;4 patches total
+<details open>
+<summary>📦 Chessbook&nbsp;&nbsp;•&nbsp;&nbsp;1 patch</summary>
+<br>
 
-| App | Package | Version | Patches |
-|-----|---------|:-------:|---------|
-| Pingo — Language Learning: Pingo AI | `com.picoai.languageapp.android` | 5.4.8 | • Pingo Premium<br>• Pingo Google login<br>• Pingo Google login (manifest) |
-| Chessbook — Master openings | `com.chessbook.android` | 1.3.54 | • Remove Move Limits |
+**Package name:** `com.chessbook.android`
+
+**🎯 Supported versions:**
+
+| 1.3.54 |
+| :---: |
+
+| 💊&nbsp;Patch | 📜&nbsp;Description | ⚙️&nbsp;Options |
+|----------|----------------|-----------|
+| [Chessbook local gates](#chessbook-local-gates) | Remove local move admission/locks, skip optional onboarding account/link prompts and disable automatic OTA. Server auth/billing and explicit login remain unchanged. |  |
+
+</details>
+
+<details open>
+<summary>📦 Pingo&nbsp;&nbsp;•&nbsp;&nbsp;3 patches</summary>
+<br>
+
+**Package name:** `com.picoai.languageapp.android`
+
+**🎯 Supported versions:**
+
+| 5.4.8 |
+| :---: |
+
+| 💊&nbsp;Patch | 📜&nbsp;Description | ⚙️&nbsp;Options |
+|----------|----------------|-----------|
+| [Pingo Google login](#pingo-google-login) | Replaces the signature-bound GMS Google Sign-In with a browser OAuth code flow (PKCE) against the app's own installed-app OAuth client so Google login works on a re-signed build. |  |
+| [Pingo Google login (manifest)](#pingo-google-login-manifest) | Registers the OAuth redirect activity and its com.googleusercontent.apps intent filter so the browser-based Google login can receive the authorization code. |  |
+| [Pingo Premium](#pingo-premium) | Unlocks premium features by bypassing Superwall paywall checks. |  |
+
+</details>
 
 <!-- PATCHES_END -->
 
