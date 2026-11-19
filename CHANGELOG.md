@@ -1,3 +1,9 @@
+## [1.1.0-dev.2](https://github.com/thebugsmith/bugsmith-morphe-patches/compare/v1.1.0-dev.1...v1.1.0-dev.2) (2026-11-19)
+
+### 🐛 Bug Fixes
+
+* **universal:** Stub AdMob banner loading when R8 repackaged the SDK ([e34b5d1](https://github.com/thebugsmith/bugsmith-morphe-patches/commit/e34b5d1de7746b31dd5f425decb7806735b063cc))
+
 ## [1.1.0-dev.1](https://github.com/thebugsmith/bugsmith-morphe-patches/compare/v1.0.0...v1.1.0-dev.1) (2026-11-19)
 
 ### ✨ New Features
