@@ -1,3 +1,9 @@
+## [1.1.0-dev.1](https://github.com/thebugsmith/bugsmith-morphe-patches/compare/v1.0.0...v1.1.0-dev.1) (2026-11-19)
+
+### ✨ New Features
+
+* add universal ad and tracker removal patch ([32784c1](https://github.com/thebugsmith/bugsmith-morphe-patches/commit/32784c14552bfd0647120ee24803f7931a7540a3))
+
 ## 1.0.0 (2026-11-12)
 
 ### ✨ New Features
