@@ -261,10 +261,48 @@ private val manifestPart = resourcePatch {
 
 // ---- Patching ------------------------------------------------------------------------------------------------------
 
-private fun BytecodePatchContext.stopAdSdks() {
-    admobEntryPoints.forEach { fingerprint ->
-        fingerprint.matchOrNull()?.method?.takeIf { it.implementation != null }?.addInstructions(0, "return-void")
+/**
+ * Banner ads in hard-minified builds. R8 repackages the AdMob SDK: `BaseAdView` becomes an `Lh7;`-style name
+ * and `loadAd` becomes `a`, but `com/google/android/gms/ads/AdView` keeps its name because app code casts to
+ * it. When the named fingerprints find nothing, take AdView's superclass and stub the single void method that
+ * takes one class parameter - that is the renamed `loadAd(AdRequest)`. Guarded to exactly one candidate, so an
+ * unrecognised shape is left untouched instead of breaking the app.
+ */
+private fun BytecodePatchContext.stubMinifiedBannerLoad(): Boolean {
+    val adView = classDefByOrNull("Lcom/google/android/gms/ads/AdView;") ?: return false
+    var superName = adView.superclass ?: return false
+    var depth = 0
+    while (depth++ < 3 && superName != "Ljava/lang/Object;") {
+        val parent = classDefByOrNull(superName) ?: return false
+        val candidates = parent.methods.filter { method ->
+            method.implementation != null && method.returnType == "V" && method.parameterTypes.size == 1 &&
+                !method.name.startsWith("set") &&
+                method.parameterTypes[0].toString().let { param ->
+                    param.startsWith("L") && !param.startsWith("Landroid/") &&
+                        classDefByOrNull(param)?.let { !AccessFlags.INTERFACE.isSet(it.accessFlags) } == true
+                }
+        }
+        if (candidates.size == 1) {
+            val target = candidates[0]
+            mutableClassDefBy(parent).methods
+                .firstOrNull { it.name == target.name && it.parameterTypes == target.parameterTypes }
+                ?.addInstructions(0, "return-void")
+            return true
+        }
+        superName = parent.superclass ?: return false
     }
+    return false
+}
+
+private fun BytecodePatchContext.stopAdSdks() {
+    var named = 0
+    admobEntryPoints.forEach { fingerprint ->
+        val method = fingerprint.matchOrNull()?.method?.takeIf { it.implementation != null } ?: return@forEach
+        method.addInstructions(0, "return-void")
+        named++
+    }
+    // Nothing of AdMob's public API kept its name: the SDK was repackaged, so go by shape instead.
+    if (named == 0) stubMinifiedBannerLoad()
     adNetworkFingerprints.flatMap { it.matchAllOrNull() ?: emptyList() }
         .map { it.method }.distinct()
         .filter { it.implementation != null } // abstract and interface methods have no body to replace
